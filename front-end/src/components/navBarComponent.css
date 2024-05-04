@@ -1,0 +1,76 @@
+#bell-icon{
+    font-size: 1.5em;
+    font-weight: bolder;
+}
+
+#root nav{
+    padding: 0;
+}
+
+.custom-toggle{
+    border: none;
+}
+.custom-toggle:focus{
+    box-shadow: none;
+    outline: none;
+}
+.dropdown-menu.show{
+    border-radius: 0px;
+    margin-top: 5px;
+    padding: 0;
+    width: fit-content;
+    border: none;
+    box-shadow: 0 0 0 3px #fff;
+}
+
+.dropdown-item{
+    margin: 0;
+    padding: 10px 20px;
+    width: 100%;
+    font-weight: bold;
+    color: gray;
+}
+
+
+.mid-content .nav-link{
+    font-weight: bold;
+    color: gray;
+}
+
+
+.theird-container-inner-1{
+    border-radius: 50%;
+    font-weight: bolder;
+}
+/* 
+.theird-container-inner-1:hover{
+    background-color: #000 ;
+    color: #fff;
+} */
+
+
+
+.theird-container {
+    gap: 10px;
+}
+
+.theird-container a img{
+    border: 1px solid black;
+    margin: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+@media screen and (min-width: 768px) {
+    .mid-content .nav-link{
+        width: 100px;
+        text-align: center;
+    }
+}
+@media screen and (max-width: 767px) {
+    .dropdown-item{
+        width: 100%;
+        padding: 8px 0;
+    }
+}
+
