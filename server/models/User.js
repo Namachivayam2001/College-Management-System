@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -11,7 +12,7 @@ const UserSchema = new mongoose.Schema({
   password: { 
     type: String, 
     required: true 
-  }, // Hashed password
+  },
   role: { 
     type: String, 
     enum: ['Admin', 'HOD', 'Teacher', 'Student'], 
@@ -27,7 +28,6 @@ const UserSchema = new mongoose.Schema({
     required: true,
     trim: true
   },
-  // Reference to the HOD, Teacher, or Student collection
   profile: { 
     type: mongoose.Schema.Types.ObjectId, 
     refPath: 'role' 
@@ -58,8 +58,8 @@ const UserSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
-UserSchema.index({ email: 1 });
+// Remove duplicate index for email (already created by unique: true)
+// UserSchema.index({ email: 1 }); // REMOVED
 UserSchema.index({ role: 1 });
 UserSchema.index({ department: 1 });
 

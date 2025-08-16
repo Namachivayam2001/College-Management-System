@@ -1,3 +1,4 @@
+
 const mongoose = require('mongoose');
 
 const DepartmentSchema = new mongoose.Schema({
@@ -38,9 +39,9 @@ const DepartmentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
-DepartmentSchema.index({ name: 1 });
-DepartmentSchema.index({ code: 1 });
+// Remove duplicate indexes (already created by unique: true)
+// DepartmentSchema.index({ name: 1 }); // REMOVED
+// DepartmentSchema.index({ code: 1 }); // REMOVED
 DepartmentSchema.index({ hod: 1 });
 
 module.exports = mongoose.model('Department', DepartmentSchema);

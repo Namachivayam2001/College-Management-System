@@ -50,9 +50,9 @@ const HODSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
-HODSchema.index({ userId: 1 });
+// Remove duplicate indexes (already created by unique: true)
+// HODSchema.index({ userId: 1 }); // REMOVED
 HODSchema.index({ department: 1 });
-HODSchema.index({ employeeId: 1 });
+// HODSchema.index({ employeeId: 1 }); // REMOVED
 
 module.exports = mongoose.model('HOD', HODSchema);

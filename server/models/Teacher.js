@@ -58,10 +58,10 @@ const TeacherSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
-TeacherSchema.index({ userId: 1 });
+// Remove duplicate indexes (already created by unique: true)
+// TeacherSchema.index({ userId: 1 }); // REMOVED
 TeacherSchema.index({ department: 1 });
-TeacherSchema.index({ employeeId: 1 });
+// TeacherSchema.index({ employeeId: 1 }); // REMOVED
 TeacherSchema.index({ subjects: 1 });
 
 module.exports = mongoose.model('Teacher', TeacherSchema);

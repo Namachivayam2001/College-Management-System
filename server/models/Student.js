@@ -82,11 +82,11 @@ const StudentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index for better query performance
-StudentSchema.index({ userId: 1 });
+// Remove duplicate indexes (already created by unique: true)
+// StudentSchema.index({ userId: 1 }); // REMOVED
 StudentSchema.index({ department: 1 });
-StudentSchema.index({ rollNumber: 1 });
-StudentSchema.index({ studentId: 1 });
+// StudentSchema.index({ rollNumber: 1 }); // REMOVED
+// StudentSchema.index({ studentId: 1 }); // REMOVED
 StudentSchema.index({ currentSemester: 1 });
 
 module.exports = mongoose.model('Student', StudentSchema);
