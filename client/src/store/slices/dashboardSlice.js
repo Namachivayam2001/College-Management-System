@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-const API_BASE_URL = 'http://localhost:8080/api'
+const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
 
 export const fetchDashboardStats = createAsyncThunk(
   'dashboard/fetchStats',
@@ -66,3 +66,4 @@ const dashboardSlice = createSlice({
 
 export const { clearDashboardError } = dashboardSlice.actions
 export default dashboardSlice.reducer
+

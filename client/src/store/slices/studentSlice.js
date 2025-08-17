@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-const API_BASE_URL = 'http://localhost:8080/api'
+const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
 
 export const fetchStudents = createAsyncThunk(
   'students/fetchAll',
@@ -73,3 +73,4 @@ const studentSlice = createSlice({
 
 export const { clearStudentError, setSelectedStudent, clearSelectedStudent } = studentSlice.actions
 export default studentSlice.reducer
+

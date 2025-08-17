@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-const API_BASE_URL = 'http://localhost:8080/api'
+const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
 
 export const fetchDepartments = createAsyncThunk(
   'departments/fetchAll',
@@ -113,3 +113,4 @@ const departmentSlice = createSlice({
 
 export const { clearDepartmentError, setSelectedDepartment, clearSelectedDepartment } = departmentSlice.actions
 export default departmentSlice.reducer
+
