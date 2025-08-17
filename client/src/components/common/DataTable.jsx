@@ -1,58 +1,48 @@
 import React from 'react';
 
-const DataTable = ({ 
-  data, 
-  columns, 
-  onEdit, 
-  onDelete, 
-  showActions = true,
-  emptyMessage = "No data available"
-}) => {
+const DataTable = ({ data, columns, actions = [], emptyMessage = 'No data found' }) => {
   if (!data || data.length === 0) {
     return (
-      <div className="empty-state">
+      <div className="data-table-empty">
         <p>{emptyMessage}</p>
       </div>
     );
   }
 
   return (
-    <div className="data-table">
-      <table>
+    <div className="data-table-container">
+      <table className="data-table">
         <thead>
           <tr>
-            {columns.map(column => (
-              <th key={column.key}>{column.label}</th>
+            {columns.map((column, index) => (
+              <th key={index} className="table-header">
+                {column.label}
+              </th>
             ))}
-            {showActions && <th>Actions</th>}
+            {actions.length > 0 && <th className="table-header">Actions</th>}
           </tr>
         </thead>
         <tbody>
-          {data.map((item, index) => (
-            <tr key={item._id || index}>
-              {columns.map(column => (
-                <td key={column.key}>
-                  {column.render ? column.render(item[column.key], item) : item[column.key]}
+          {data.map((row, rowIndex) => (
+            <tr key={row.id || rowIndex} className="table-row">
+              {columns.map((column, colIndex) => (
+                <td key={colIndex} className="table-cell">
+                  {column.render ? column.render(row[column.key], row) : row[column.key]}
                 </td>
               ))}
-              {showActions && (
-                <td className="actions">
-                  {onEdit && (
-                    <button 
-                      className="action-btn edit"
-                      onClick={() => onEdit(item)}
-                    >
-                      ✏️
-                    </button>
-                  )}
-                  {onDelete && (
-                    <button 
-                      className="action-btn delete"
-                      onClick={() => onDelete(item)}
-                    >
-                      🗑️
-                    </button>
-                  )}
+              {actions.length > 0 && (
+                <td className="table-cell actions-cell">
+                  <div className="action-buttons">
+                    {actions.map((action, actionIndex) => (
+                      <button
+                        key={actionIndex}
+                        className="action-btn"
+                        onClick={() => action.action(row)}
+                      >
+                        {action.label}
+                      </button>
+                    ))}
+                  </div>
                 </td>
               )}
             </tr>

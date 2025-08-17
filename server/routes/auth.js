@@ -1,6 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
 const { authenticateToken, authorizeRole } = require('../middleware/auth');
+const { handleValidationErrors } = require('../middleware/validation');
 const {
   login,
   register,
@@ -46,11 +47,11 @@ const resetPasswordValidation = [
 // Routes
 // @route   POST /api/auth/login
 // @access  Public
-router.post('/login', loginValidation, login);
+router.post('/login', loginValidation, handleValidationErrors, login);
 
 // @route   POST /api/auth/register
 // @access  Private (Admin only)
-router.post('/register', authenticateToken, authorizeRole('Admin'), registerValidation, register);
+router.post('/register', authenticateToken, authorizeRole('Admin'), registerValidation, handleValidationErrors, register);
 
 // @route   GET /api/auth/profile
 // @access  Private
@@ -58,14 +59,14 @@ router.get('/profile', authenticateToken, getProfile);
 
 // @route   PUT /api/auth/profile
 // @access  Private
-router.put('/profile', authenticateToken, updateProfileValidation, updateProfile);
+router.put('/profile', authenticateToken, updateProfileValidation, handleValidationErrors, updateProfile);
 
 // @route   POST /api/auth/forgot-password
 // @access  Public
-router.post('/forgot-password', forgotPasswordValidation, forgotPassword);
+router.post('/forgot-password', forgotPasswordValidation, handleValidationErrors, forgotPassword);
 
 // @route   POST /api/auth/reset-password
 // @access  Public
-router.post('/reset-password', resetPasswordValidation, resetPassword);
+router.post('/reset-password', resetPasswordValidation, handleValidationErrors, resetPassword);
 
 module.exports = router;

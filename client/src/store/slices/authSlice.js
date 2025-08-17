@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-
-const API_BASE_URL = import.meta.env.REACT_APP_API_BASE_URL;
+import { API_CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from '../../config/config'
 
 // Async thunks
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/auth/login`, {
+      console.log('Attempting login with:', credentials);
+      console.log('API URL:', `${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`);
+      
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -15,17 +17,22 @@ export const loginUser = createAsyncThunk(
         body: JSON.stringify(credentials),
       })
 
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+
       const data = await response.json()
+      console.log('Response data:', data);
 
       if (!data.success) {
         return rejectWithValue(data.message || 'Login failed')
       }
 
       // Store token in localStorage
-      localStorage.setItem('token', data.token)
+      localStorage.setItem('token', data.data.token)
       return data
     } catch (error) {
-      return rejectWithValue('Network error. Please try again.')
+      console.error('Login error:', error);
+      return rejectWithValue(ERROR_MESSAGES.NETWORK_ERROR)
     }
   }
 )
@@ -53,7 +60,7 @@ export const getProfile = createAsyncThunk(
         return rejectWithValue('No token found')
       }
 
-      const response = await fetch(`${API_BASE_URL}/auth/profile`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.PROFILE}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -67,7 +74,7 @@ export const getProfile = createAsyncThunk(
 
       return data.data
     } catch (error) {
-      return rejectWithValue('Network error')
+      return rejectWithValue(ERROR_MESSAGES.NETWORK_ERROR)
     }
   }
 )
@@ -101,8 +108,8 @@ const authSlice = createSlice({
       .addCase(loginUser.fulfilled, (state, action) => {
         state.isLoading = false
         state.isAuthenticated = true
-        state.user = action.payload.user
-        state.token = action.payload.token
+        state.user = action.payload.data.user
+        state.token = action.payload.data.token
         state.error = null
       })
       .addCase(loginUser.rejected, (state, action) => {

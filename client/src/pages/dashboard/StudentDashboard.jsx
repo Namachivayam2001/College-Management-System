@@ -1,256 +1,120 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchDashboardStats } from '../../store/slices/dashboardSlice';
+import { useSelector } from 'react-redux';
 import Header from '../../components/common/Header';
 import Sidebar from '../../components/common/Sidebar';
 import StatsCard from '../../components/common/StatsCard';
 import DataTable from '../../components/common/DataTable';
-import '../../components/common/Dashboard.css';
 
 const StudentDashboard = () => {
-  const dispatch = useDispatch();
   const { user } = useSelector(state => state.auth);
-  const { stats } = useSelector(state => state.dashboard);
-
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [stats, setStats] = useState({
+    totalCourses: 0,
+    totalAssignments: 0,
+    averageGrade: 0,
+    attendancePercentage: 0
+  });
 
   useEffect(() => {
-    dispatch(fetchDashboardStats());
-  }, [dispatch]);
-
-  // Mock data for student dashboard
-  const studentStats = {
-    totalCourses: 6,
-    totalAssignments: 12,
-    completedAssignments: 8,
-    attendancePercentage: 85,
-    currentGPA: 3.8
-  };
+    // Mock data for now - replace with actual API calls
+    setStats({
+      totalCourses: 6,
+      totalAssignments: 12,
+      averageGrade: 85,
+      attendancePercentage: 92
+    });
+  }, []);
 
   const courses = [
-    { id: 1, name: 'Computer Science Fundamentals', instructor: 'Dr. Smith', grade: 'A', attendance: 90 },
-    { id: 2, name: 'Data Structures', instructor: 'Prof. Johnson', grade: 'A-', attendance: 85 },
-    { id: 3, name: 'Algorithms', instructor: 'Dr. Brown', grade: 'B+', attendance: 80 },
-    { id: 4, name: 'Database Systems', instructor: 'Prof. Davis', grade: 'A', attendance: 95 },
-    { id: 5, name: 'Software Engineering', instructor: 'Dr. Wilson', grade: 'A-', attendance: 88 },
-    { id: 6, name: 'Web Development', instructor: 'Prof. Taylor', grade: 'A', attendance: 92 }
+    { id: 1, name: 'Computer Science Fundamentals', code: 'CS101', instructor: 'Dr. Smith', credits: 3, grade: 'A-' },
+    { id: 2, name: 'Data Structures', code: 'CS201', instructor: 'Prof. Johnson', credits: 4, grade: 'B+' },
+    { id: 3, name: 'Algorithms', code: 'CS301', instructor: 'Dr. Williams', credits: 4, grade: 'A' }
   ];
 
   const assignments = [
-    { id: 1, title: 'Programming Assignment 1', course: 'Computer Science Fundamentals', dueDate: '2024-01-15', status: 'Completed', grade: 'A' },
-    { id: 2, title: 'Data Structures Project', course: 'Data Structures', dueDate: '2024-01-20', status: 'Completed', grade: 'A-' },
-    { id: 3, title: 'Algorithm Analysis', course: 'Algorithms', dueDate: '2024-01-25', status: 'Pending', grade: '-' },
-    { id: 4, title: 'Database Design', course: 'Database Systems', dueDate: '2024-01-30', status: 'Completed', grade: 'A' }
-  ];
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-  };
-
-  const courseColumns = [
-    { key: 'name', label: 'Course Name' },
-    { key: 'instructor', label: 'Instructor' },
-    { key: 'grade', label: 'Current Grade' },
-    { key: 'attendance', label: 'Attendance %', render: (value) => `${value}%` }
-  ];
-
-  const assignmentColumns = [
-    { key: 'title', label: 'Assignment' },
-    { key: 'course', label: 'Course' },
-    { key: 'dueDate', label: 'Due Date' },
-    { key: 'status', label: 'Status', render: (value) => (
-      <span className={`status ${value === 'Completed' ? 'completed' : 'pending'}`}>
-        {value}
-      </span>
-    )},
-    { key: 'grade', label: 'Grade' }
+    { id: 1, title: 'Programming Assignment 1', course: 'CS101', dueDate: '2024-01-15', status: 'Submitted', grade: 'A-' },
+    { id: 2, title: 'Data Structures Project', course: 'CS201', dueDate: '2024-01-20', status: 'Submitted', grade: 'B+' },
+    { id: 3, title: 'Algorithm Analysis', course: 'CS301', dueDate: '2024-01-25', status: 'Pending', grade: '-' }
   ];
 
   return (
     <div className="dashboard-layout">
       <Header variant="dashboard" />
-      
-      <div className="dashboard-container">
-        <Sidebar activeTab={activeTab} onTabChange={handleTabChange} />
-        
-        <main className="main-content">
-          <div className="breadcrumb">
-            Home &gt; {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+      <div className="dashboard-content">
+        <Sidebar />
+        <main className="dashboard-main">
+          <div className="dashboard-header">
+            <h1>Student Dashboard</h1>
+            <p>Welcome back, {user?.firstName} {user?.lastName}</p>
           </div>
 
-          {activeTab === 'dashboard' && (
-            <div className="dashboard-content">
-              {/* Summary Cards */}
-              <div className="stats-grid">
-                <StatsCard
-                  title="My Courses"
-                  value={studentStats.totalCourses}
-                  icon="📚"
-                />
-                <StatsCard
-                  title="Total Assignments"
-                  value={studentStats.totalAssignments}
-                  icon="📝"
-                />
-                <StatsCard
-                  title="Attendance"
-                  value={`${studentStats.attendancePercentage}%`}
-                  icon="📋"
-                />
-                <StatsCard
-                  title="Current GPA"
-                  value={studentStats.currentGPA}
-                  icon="📊"
-                />
-              </div>
+          {/* Stats Cards */}
+          <div className="stats-grid">
+            <StatsCard
+              title="Total Courses"
+              value={stats.totalCourses}
+              icon="📚"
+              trend="+1"
+              trendType="positive"
+            />
+            <StatsCard
+              title="Assignments"
+              value={stats.totalAssignments}
+              icon="📝"
+              trend="+3"
+              trendType="positive"
+            />
+            <StatsCard
+              title="Average Grade"
+              value={`${stats.averageGrade}%`}
+              icon="📊"
+              trend="+2%"
+              trendType="positive"
+            />
+            <StatsCard
+              title="Attendance"
+              value={`${stats.attendancePercentage}%`}
+              icon="✅"
+              trend="+1%"
+              trendType="positive"
+            />
+          </div>
 
-              {/* Recent Assignments */}
-              <div className="recent-assignments">
-                <h2>Recent Assignments</h2>
-                <div className="assignments-grid">
-                  {assignments.slice(0, 3).map(assignment => (
-                    <div key={assignment.id} className="assignment-card">
-                      <h3>{assignment.title}</h3>
-                      <p className="course-name">{assignment.course}</p>
-                      <div className="assignment-details">
-                        <span className="due-date">Due: {assignment.dueDate}</span>
-                        <span className={`status ${assignment.status === 'Completed' ? 'completed' : 'pending'}`}>
-                          {assignment.status}
-                        </span>
-                      </div>
-                      {assignment.grade !== '-' && (
-                        <div className="grade">Grade: {assignment.grade}</div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
+          {/* Current Courses */}
+          <div className="dashboard-section">
+            <h2>Current Courses</h2>
+            <DataTable
+              data={courses}
+              columns={[
+                { key: 'name', label: 'Course Name' },
+                { key: 'code', label: 'Code' },
+                { key: 'instructor', label: 'Instructor' },
+                { key: 'credits', label: 'Credits' },
+                { key: 'grade', label: 'Grade' }
+              ]}
+              actions={[
+                { label: 'View', action: (row) => console.log('View course:', row) }
+              ]}
+            />
+          </div>
 
-              {/* Course Performance */}
-              <div className="course-performance">
-                <h2>Course Performance</h2>
-                <div className="performance-chart">
-                  {courses.map(course => (
-                    <div key={course.id} className="course-performance-item">
-                      <div className="course-info">
-                        <h4>{course.name}</h4>
-                        <p>{course.instructor}</p>
-                      </div>
-                      <div className="performance-stats">
-                        <div className="stat">
-                          <span>Grade:</span>
-                          <strong>{course.grade}</strong>
-                        </div>
-                        <div className="stat">
-                          <span>Attendance:</span>
-                          <strong>{course.attendance}%</strong>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'courses' && (
-            <div className="section-content">
-              <div className="section-header">
-                <h2>My Courses</h2>
-              </div>
-              <DataTable
-                data={courses}
-                columns={courseColumns}
-                showActions={false}
-                emptyMessage="No courses found"
-              />
-            </div>
-          )}
-
-          {activeTab === 'assignments' && (
-            <div className="section-content">
-              <div className="section-header">
-                <h2>My Assignments</h2>
-              </div>
-              <DataTable
-                data={assignments}
-                columns={assignmentColumns}
-                showActions={false}
-                emptyMessage="No assignments found"
-              />
-            </div>
-          )}
-
-          {activeTab === 'attendance' && (
-            <div className="section-content">
-              <div className="section-header">
-                <h2>My Attendance</h2>
-              </div>
-              
-              <div className="attendance-overview">
-                <div className="overall-attendance">
-                  <h3>Overall Attendance</h3>
-                  <div className="attendance-circle">
-                    <div className="attendance-percentage">{studentStats.attendancePercentage}%</div>
-                    <p>Present</p>
-                  </div>
-                </div>
-                
-                <div className="course-attendance">
-                  <h3>Course-wise Attendance</h3>
-                  <div className="course-attendance-list">
-                    {courses.map(course => (
-                      <div key={course.id} className="course-attendance-item">
-                        <div className="course-name">{course.name}</div>
-                        <div className="attendance-bar">
-                          <div 
-                            className="attendance-fill" 
-                            style={{width: `${course.attendance}%`}}
-                          ></div>
-                          <span className="attendance-text">{course.attendance}%</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'grades' && (
-            <div className="section-content">
-              <div className="section-header">
-                <h2>My Grades</h2>
-              </div>
-              
-              <div className="grades-overview">
-                <div className="gpa-summary">
-                  <h3>GPA Summary</h3>
-                  <div className="gpa-card">
-                    <div className="gpa-number">{studentStats.currentGPA}</div>
-                    <p>Current GPA</p>
-                  </div>
-                </div>
-                
-                <div className="course-grades">
-                  <h3>Course Grades</h3>
-                  <div className="grades-list">
-                    {courses.map(course => (
-                      <div key={course.id} className="grade-item">
-                        <div className="course-info">
-                          <h4>{course.name}</h4>
-                          <p>{course.instructor}</p>
-                        </div>
-                        <div className="grade-display">
-                          <span className="grade-letter">{course.grade}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* Recent Assignments */}
+          <div className="dashboard-section">
+            <h2>Recent Assignments</h2>
+            <DataTable
+              data={assignments}
+              columns={[
+                { key: 'title', label: 'Assignment' },
+                { key: 'course', label: 'Course' },
+                { key: 'dueDate', label: 'Due Date' },
+                { key: 'status', label: 'Status' },
+                { key: 'grade', label: 'Grade' }
+              ]}
+              actions={[
+                { label: 'View', action: (row) => console.log('View assignment:', row) },
+                { label: 'Submit', action: (row) => console.log('Submit assignment:', row) }
+              ]}
+            />
+          </div>
         </main>
       </div>
     </div>

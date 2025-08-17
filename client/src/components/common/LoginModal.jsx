@@ -23,27 +23,40 @@ const LoginModal = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = await dispatch(loginUser(formData));
-    if (loginUser.fulfilled.match(result)) {
-      onClose();
-      // Redirect based on user role
-      const userRole = result.payload.user.role?.toLowerCase();
-      switch (userRole) {
-        case 'admin':
-          navigate('/admin/dashboard');
-          break;
-        case 'hod':
-          navigate('/hod/dashboard');
-          break;
-        case 'teacher':
-          navigate('/teacher/dashboard');
-          break;
-        case 'student':
-          navigate('/student/dashboard');
-          break;
-        default:
-          navigate('/dashboard');
+    console.log('Form submitted with:', formData);
+    
+    try {
+      const result = await dispatch(loginUser(formData));
+      console.log('Login result:', result);
+      
+      if (result.meta.requestStatus === 'fulfilled') {
+        console.log('Login successful, redirecting...');
+        onClose();
+        // Redirect based on user role
+        const userRole = result.payload.data.user.role?.toLowerCase();
+        console.log('User role:', userRole);
+        
+        switch (userRole) {
+          case 'admin':
+            navigate('/admin/dashboard');
+            break;
+          case 'hod':
+            navigate('/hod/dashboard');
+            break;
+          case 'teacher':
+            navigate('/teacher/dashboard');
+            break;
+          case 'student':
+            navigate('/student/dashboard');
+            break;
+          default:
+            navigate('/dashboard');
+        }
+      } else if (result.meta.requestStatus === 'rejected') {
+        console.error('Login failed:', result.payload);
       }
+    } catch (error) {
+      console.error('Login error:', error);
     }
   };
 
