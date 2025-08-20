@@ -1,15 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { API_CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from '../../config/config'
 
+const SERVER_BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
+const API_ENDPOINT_AUTH_LOGIN = import.meta.env.VITE_API_ENDPOINT_AUTH_LOGIN;
+
 // Async thunks
 export const loginUser = createAsyncThunk(
   'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
       console.log('Attempting login with:', credentials);
-      console.log('API URL:', `${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`);
+      console.log('API URL:', `${SERVER_BASE_URL}${API_ENDPOINT_AUTH_LOGIN}`);
       
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.LOGIN}`, {
+      const response = await fetch(`${SERVER_BASE_URL}${API_ENDPOINT_AUTH_LOGIN}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

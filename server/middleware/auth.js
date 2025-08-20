@@ -14,7 +14,7 @@ const authenticateToken = async (req, res, next) => {
       });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'college-management-system-secret-key-2024');
     
     // Get user from database
     const user = await User.findById(decoded.userId)

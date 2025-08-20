@@ -16,7 +16,18 @@ const app = express();
 const PORT = process.env.PORT || 8080;
 
 // Connect to MongoDB
-connectDB();
+let dbConnected = false;
+connectDB().then(connected => {
+  dbConnected = connected;
+  if (connected) {
+    console.log('Database connection successful');
+  } else {
+    console.log('Database connection failed - running in limited mode');
+  }
+}).catch(err => {
+  console.error('Database connection error:', err);
+  console.log('Running in limited mode without database');
+});
 
 // Security middleware
 app.use(helmet());
@@ -52,7 +63,8 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Server is running',
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    database: dbConnected ? 'connected' : 'disconnected'
   });
 });
 

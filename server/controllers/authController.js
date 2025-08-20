@@ -284,7 +284,7 @@ const forgotPassword = async (req, res) => {
     // Generate reset token (you can implement email sending here)
     const resetToken = jwt.sign(
       { userId: user._id },
-      process.env.JWT_SECRET || 'your-secret-key',
+      process.env.JWT_SECRET || 'college-management-system-secret-key-2024',
       { expiresIn: '1h' }
     );
 
@@ -320,7 +320,7 @@ const resetPassword = async (req, res) => {
     }
 
     // Verify token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'college-management-system-secret-key-2024');
     
     const user = await User.findById(decoded.userId);
     if (!user) {

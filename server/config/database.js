@@ -2,7 +2,10 @@ const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGODB_URI, {
+    const mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/college_management_system';
+    console.log('Connecting to MongoDB:', mongoURI);
+    
+    const conn = await mongoose.connect(mongoURI, {
       serverApi: {
         version: '1',
         strict: true,
@@ -28,9 +31,17 @@ const connectDB = async () => {
       process.exit(0);
     });
 
+    return true; // Return true on successful connection
+
   } catch (error) {
     console.error('Error connecting to MongoDB:', error.message);
-    process.exit(1);
+    console.error('Please ensure MongoDB is running and accessible');
+    console.error('You can install MongoDB from: https://docs.mongodb.com/manual/installation/');
+    console.error('Or use MongoDB Atlas (cloud): https://www.mongodb.com/atlas');
+    
+    // Don't exit the process, let the server continue with limited functionality
+    console.log('Server will continue without database connection');
+    return false;
   }
 };
 
