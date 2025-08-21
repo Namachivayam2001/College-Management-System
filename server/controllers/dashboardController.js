@@ -3,6 +3,9 @@ const Department = require('../models/Department');
 const Student = require('../models/Student');
 const Teacher = require('../models/Teacher');
 const HOD = require('../models/HOD');
+const TeacherCourse = require('../models/TeacherCourse');
+const StudentCourse = require('../models/StudentCourse');
+const Course = require('../models/Course');
 
 // @desc    Get admin dashboard data
 // @route   GET /api/dashboard/admin
@@ -93,36 +96,54 @@ const getHODDashboard = async (req, res) => {
   }
 };
 
-// @desc    Get teacher dashboard data
-// @route   GET /api/dashboard/teacher
-// @access  Private (Teacher)
+// @desc    Get data for the teacher's dashboard
+// @route   GET /api/teacher/dashboard
+// @access  Private (Teacher only)
 const getTeacherDashboard = async (req, res) => {
   try {
-    const teacherId = req.user._id;
+    const teacherId = req.user.profile;
+    const departmentId = req.user.department;
 
-    // Mock data for now - replace with actual course/assignment data
-    const mockData = {
-      stats: {
-        totalCourses: 4,
-        totalStudents: 120,
-        totalAssignments: 8,
-        averageAttendance: 88
-      },
-      courses: [
-        { id: 1, name: 'Computer Science Fundamentals', code: 'CS101', students: 30, status: 'Active' },
-        { id: 2, name: 'Data Structures', code: 'CS201', students: 25, status: 'Active' },
-        { id: 3, name: 'Algorithms', code: 'CS301', students: 35, status: 'Active' }
-      ],
-      students: [
-        { id: 1, name: 'John Doe', rollNumber: 'CS001', attendance: 95, lastAssignment: 'A-' },
-        { id: 2, name: 'Jane Smith', rollNumber: 'CS002', attendance: 88, lastAssignment: 'B+' },
-        { id: 3, name: 'Bob Johnson', rollNumber: 'CS003', attendance: 92, lastAssignment: 'A' }
-      ]
-    };
+    // 1. Fetch all courses taught by this teacher
+    // We use a join with the new TeacherCourse model to find the courses linked to this teacher's ID.
+    const teacherCoursesList = await TeacherCourse.find({ teacherId })
+      .populate('courseId', 'name code') // Populate the actual Course details
+      .populate('teacherId', 'userId') // Optionally populate to ensure link is correct
+      .sort({ academicYear: -1, semester: 1 });
+
+    const courses = teacherCoursesList.map(tc => ({
+      id: tc.courseId._id,
+      name: tc.courseId.name,
+      code: tc.courseId.code,
+      academicYear: tc.academicYear,
+      semester: tc.semester,
+      status: 'Active' // Assuming a default status
+    }));
+
+    const totalCourses = courses.length;
+
+    // 2. Get student statistics
+    // This requires a new StudentCourse model to accurately count students per course.
+    // As a placeholder, we'll continue to get all students in the teacher's department.
+    const totalStudentsInDepartment = await Student.countDocuments({ department: departmentId });
+
+    // 3. Get a list of the teacher's students
+    // This should ideally be a list of students enrolled in the teacher's courses.
+    // For now, we fetch a sample of students from the same department.
+    const teacherStudents = await Student.find({ department: departmentId })
+      .populate('userId', 'firstName lastName email')
+      .limit(10);
 
     res.status(200).json({
       success: true,
-      data: mockData
+      data: {
+        stats: {
+          totalCourses,
+          totalStudents: totalStudentsInDepartment
+        },
+        teacherCourses: courses,
+        teacherStudents
+      }
     });
   } catch (error) {
     console.error('Teacher dashboard error:', error);
@@ -133,36 +154,59 @@ const getTeacherDashboard = async (req, res) => {
   }
 };
 
-// @desc    Get student dashboard data
-// @route   GET /api/dashboard/student
-// @access  Private (Student)
+// @desc    Get data for the student's dashboard
+// @route   GET /api/student/dashboard
+// @access  Private (Student only)
 const getStudentDashboard = async (req, res) => {
   try {
-    const studentId = req.user._id;
+    // We get the student's profile ID from the authenticated user object.
+    const studentProfileId = req.user.profile;
 
-    // Mock data for now - replace with actual course/assignment data
-    const mockData = {
-      stats: {
-        totalCourses: 6,
-        totalAssignments: 12,
-        averageGrade: 85,
-        attendancePercentage: 92
-      },
-      courses: [
-        { id: 1, name: 'Computer Science Fundamentals', code: 'CS101', instructor: 'Dr. Smith', credits: 3, grade: 'A-' },
-        { id: 2, name: 'Data Structures', code: 'CS201', instructor: 'Prof. Johnson', credits: 4, grade: 'B+' },
-        { id: 3, name: 'Algorithms', code: 'CS301', instructor: 'Dr. Williams', credits: 4, grade: 'A' }
-      ],
-      assignments: [
-        { id: 1, title: 'Programming Assignment 1', course: 'CS101', dueDate: '2024-01-15', status: 'Submitted', grade: 'A-' },
-        { id: 2, title: 'Data Structures Project', course: 'CS201', dueDate: '2024-01-20', status: 'Submitted', grade: 'B+' },
-        { id: 3, title: 'Algorithm Analysis', course: 'CS301', dueDate: '2024-01-25', status: 'Pending', grade: '-' }
-      ]
-    };
+    // 1. Fetch all courses for the student using the StudentCourse junction table.
+    const studentCoursesList = await StudentCourse.find({ studentId: studentProfileId })
+      .populate('courseId', 'name code credits');
+
+    // 2. Prepare the list of courses with additional details.
+    const courses = await Promise.all(studentCoursesList.map(async (sc) => {
+      // Find the teacher for each course using the TeacherCourse junction table.
+      const teacherCourse = await TeacherCourse.findOne({ courseId: sc.courseId._id }).populate('teacherId');
+      
+      let instructorName = 'Not assigned';
+      if (teacherCourse && teacherCourse.teacherId) {
+        // Fetch the user details of the teacher to get their name.
+        const teacherUser = await User.findById(teacherCourse.teacherId.userId);
+        if (teacherUser) {
+          instructorName = `${teacherUser.firstName} ${teacherUser.lastName}`;
+        }
+      }
+
+      return {
+        id: sc.courseId._id,
+        name: sc.courseId.name,
+        code: sc.courseId.code,
+        instructor: instructorName,
+        credits: sc.courseId.credits,
+        grade: sc.grade || 'N/A' // Use the grade from the StudentCourse model
+      };
+    }));
+
+    // 3. Calculate dynamic statistics.
+    const totalCourses = courses.length;
+
+    // Placeholders for data that requires additional models.
+    const totalAssignments = 0; // Requires an Assignment model.
+    const attendancePercentage = 0; // Requires an Attendance model.
 
     res.status(200).json({
       success: true,
-      data: mockData
+      data: {
+        stats: {
+          totalCourses,
+          totalAssignments,
+          attendancePercentage
+        },
+        courses
+      }
     });
   } catch (error) {
     console.error('Student dashboard error:', error);

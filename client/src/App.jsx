@@ -27,8 +27,8 @@ function App() {
   }, [isAuthenticated, user, dispatch]);
 
   // Function to get the appropriate dashboard based on user role
+  const userRole = user?.role?.toLowerCase();
   const getDashboardComponent = () => {
-    const userRole = user?.role?.toLowerCase();
     switch (userRole) {
       case 'admin':
         return <AdminDashboard />;
@@ -39,7 +39,7 @@ function App() {
       case 'student':
         return <StudentDashboard />;
       default:
-        return <AdminDashboard />; // Default fallback
+        return <HomePage />; // Default fallback
     }
   };
 
@@ -49,50 +49,10 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<HomePage />} />
-          
-          {/* Protected Routes - Admin */}
-          <Route 
-            path="/admin/*" 
-            element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <AdminDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Protected Routes - HOD */}
-          <Route 
-            path="/hod/*" 
-            element={
-              <ProtectedRoute allowedRoles={['hod']}>
-                <HODDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Protected Routes - Teacher */}
-          <Route 
-            path="/teacher/*" 
-            element={
-              <ProtectedRoute allowedRoles={['teacher']}>
-                <TeacherDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          
-          {/* Protected Routes - Student */}
-          <Route 
-            path="/student/*" 
-            element={
-              <ProtectedRoute allowedRoles={['student']}>
-                <StudentDashboard />
-              </ProtectedRoute>
-            } 
-          />
-          
+
           {/* Default Dashboard Route - Redirects based on role */}
           <Route 
-            path="/dashboard" 
+            path={`${userRole}/dashboard`}
             element={
               <ProtectedRoute>
                 {getDashboardComponent()}
