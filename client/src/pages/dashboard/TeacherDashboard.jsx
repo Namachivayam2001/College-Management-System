@@ -1,148 +1,132 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Header from '../../components/common/Header';
-import Sidebar from '../../components/common/Sidebar';
-import StatsCard from '../../components/common/StatsCard';
-import DataTable from '../../components/common/DataTable';
+import { useSelector } from "react-redux";
+import { StatsCard } from "../../components/dashboard/StatsCard";
+import {
+  GraduationCap,
+  BookOpen,
+  Calendar,
+  ClipboardList,
+  Clock,
+  TrendingUp
+} from "lucide-react";
 
-const TeacherDashboard = () => {
-  const { user } = useSelector(state => state.auth);
-  const [stats, setStats] = useState({
-    totalCourses: 0,
-    totalStudents: 0,
-    totalAssignments: 0,
-    averageAttendance: 0
-  });
-
-  useEffect(() => {
-    // Mock data for now - replace with actual API calls
-    setStats({
-      totalCourses: 4,
-      totalStudents: 120,
-      totalAssignments: 8,
-      averageAttendance: 88
-    });
-  }, []);
-
-  const courses = [
-    { id: 1, name: 'Computer Science Fundamentals', code: 'CS101', students: 30, status: 'Active' },
-    { id: 2, name: 'Data Structures', code: 'CS201', students: 25, status: 'Active' },
-    { id: 3, name: 'Algorithms', code: 'CS301', students: 35, status: 'Active' }
-  ];
-
-  const students = [
-    { id: 1, name: 'John Doe', rollNumber: 'CS001', attendance: 95, lastAssignment: 'A-' },
-    { id: 2, name: 'Jane Smith', rollNumber: 'CS002', attendance: 88, lastAssignment: 'B+' },
-    { id: 3, name: 'Bob Johnson', rollNumber: 'CS003', attendance: 92, lastAssignment: 'A' }
-  ];
-
-  const assignments = [
-    { id: 1, title: 'Programming Assignment 1', course: 'CS101', dueDate: '2024-01-15', submissions: 28, status: 'Active' },
-    { id: 2, title: 'Data Structures Project', course: 'CS201', dueDate: '2024-01-20', submissions: 22, status: 'Active' },
-    { id: 3, title: 'Algorithm Analysis', course: 'CS301', dueDate: '2024-01-25', submissions: 0, status: 'Draft' }
-  ];
+export default function TeacherDashboard() {
+  const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="dashboard-layout">
-      <Header variant="dashboard" />
-      <div className="dashboard-content">
-        <Sidebar />
-        <main className="dashboard-main">
-          <div className="dashboard-header">
-            <h1>Teacher Dashboard</h1>
-            <p>Welcome back, {user?.firstName} {user?.lastName}</p>
-          </div>
+    <div className="space-y-8">
+      {/* Welcome Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-foreground">
+          Teacher Dashboard
+        </h1>
+        <p className="text-muted-foreground">
+          Manage your classes, track student progress, and handle exam duties.
+        </p>
+      </div>
 
-          {/* Stats Cards */}
-          <div className="stats-grid">
-            <StatsCard
-              title="Total Courses"
-              value={stats.totalCourses}
-              icon="📚"
-              trend="+1"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Total Students"
-              value={stats.totalStudents}
-              icon="👨‍🎓"
-              trend="+5"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Assignments"
-              value={stats.totalAssignments}
-              icon="📝"
-              trend="+2"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Avg Attendance"
-              value={`${stats.averageAttendance}%`}
-              icon="✅"
-              trend="+3%"
-              trendType="positive"
-            />
-          </div>
+      {/* Teacher Stats Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Total Students"
+          value="156"
+          icon={GraduationCap}
+          variant="primary"
+        />
+        <StatsCard
+          title="Subjects Teaching"
+          value="3"
+          icon={BookOpen}
+          variant="accent"
+        />
+        <StatsCard
+          title="Classes Today"
+          value="5"
+          icon={Clock}
+          variant="warning"
+        />
+        <StatsCard
+          title="Average Attendance"
+          value="89.2%"
+          icon={TrendingUp}
+          variant="success"
+          trend={{
+            value: 4.1,
+            label: "vs last week",
+            isPositive: true,
+          }}
+        />
+      </div>
 
-          {/* My Courses */}
-          <div className="dashboard-section">
-            <h2>My Courses</h2>
-            <DataTable
-              data={courses}
-              columns={[
-                { key: 'name', label: 'Course Name' },
-                { key: 'code', label: 'Code' },
-                { key: 'students', label: 'Students' },
-                { key: 'status', label: 'Status' }
-              ]}
-              actions={[
-                { label: 'View', action: (row) => console.log('View course:', row) },
-                { label: 'Manage', action: (row) => console.log('Manage course:', row) }
-              ]}
-            />
-          </div>
+      {/* Teacher Specific Stats */}
+      <div className="grid gap-6 md:grid-cols-2">
+        <StatsCard
+          title="Pending Evaluations"
+          value="12"
+          icon={ClipboardList}
+          variant="warning"
+        />
+        <StatsCard
+          title="Upcoming Exam Duties"
+          value="2"
+          icon={Calendar}
+          variant="accent"
+        />
+      </div>
 
-          {/* Recent Students */}
-          <div className="dashboard-section">
-            <h2>Recent Students</h2>
-            <DataTable
-              data={students}
-              columns={[
-                { key: 'name', label: 'Name' },
-                { key: 'rollNumber', label: 'Roll Number' },
-                { key: 'attendance', label: 'Attendance %' },
-                { key: 'lastAssignment', label: 'Last Assignment' }
-              ]}
-              actions={[
-                { label: 'View', action: (row) => console.log('View student:', row) },
-                { label: 'Grade', action: (row) => console.log('Grade student:', row) }
-              ]}
-            />
+      {/* Today's Schedule & Tasks */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Today's Classes
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Mathematics - Class X</p>
+                <p className="text-sm text-muted-foreground">Room 101 • 45 students</p>
+              </div>
+              <span className="text-sm font-medium">9:00 AM</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Algebra - Class XI</p>
+                <p className="text-sm text-muted-foreground">Room 102 • 38 students</p>
+              </div>
+              <span className="text-sm font-medium">11:00 AM</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Calculus - Class XII</p>
+                <p className="text-sm text-muted-foreground">Room 103 • 42 students</p>
+              </div>
+              <span className="text-sm font-medium">2:00 PM</span>
+            </div>
           </div>
+        </div>
 
-          {/* Assignments */}
-          <div className="dashboard-section">
-            <h2>Recent Assignments</h2>
-            <DataTable
-              data={assignments}
-              columns={[
-                { key: 'title', label: 'Assignment' },
-                { key: 'course', label: 'Course' },
-                { key: 'dueDate', label: 'Due Date' },
-                { key: 'submissions', label: 'Submissions' },
-                { key: 'status', label: 'Status' }
-              ]}
-              actions={[
-                { label: 'View', action: (row) => console.log('View assignment:', row) },
-                { label: 'Grade', action: (row) => console.log('Grade assignment:', row) }
-              ]}
-            />
+        {/* Pending Tasks */}
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <ClipboardList className="w-5 h-5" />
+            Pending Tasks
+          </h3>
+          <div className="space-y-3">
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <p className="font-medium">Grade Assignment Submissions</p>
+              <p className="text-sm text-muted-foreground">Class XI - Due tomorrow</p>
+            </div>
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <p className="font-medium">Prepare Exam Questions</p>
+              <p className="text-sm text-muted-foreground">Mid-term Mathematics</p>
+            </div>
+            <div className="p-3 bg-secondary/30 rounded-lg">
+              <p className="font-medium">Submit Attendance Report</p>
+              <p className="text-sm text-muted-foreground">Monthly report - March</p>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
-};
-
-export default TeacherDashboard;
+}

@@ -1,8 +1,9 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { API_CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from '../../config/config'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const SERVER_BASE_URL = import.meta.env.VITE_SERVER_BASE_URL;
-const API_ENDPOINT_AUTH_LOGIN = import.meta.env.VITE_API_ENDPOINT_AUTH_LOGIN;
+const API_AUTH_PROFILE = import.meta.env.VITE_API_AUTH_PROFILE;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_AUTH_LOGIN = import.meta.env.VITE_API_AUTH_LOGIN;
+const ERROR_NETWORK = import.meta.env.VITE_ERROR_NETWORK;
 
 // Async thunks
 export const loginUser = createAsyncThunk(
@@ -10,9 +11,9 @@ export const loginUser = createAsyncThunk(
   async (credentials, { rejectWithValue }) => {
     try {
       console.log('Attempting login with:', credentials);
-      console.log('API URL:', `${SERVER_BASE_URL}${API_ENDPOINT_AUTH_LOGIN}`);
+      console.log('API URL:', `${API_BASE_URL}${API_AUTH_LOGIN}`);
       
-      const response = await fetch(`${SERVER_BASE_URL}${API_ENDPOINT_AUTH_LOGIN}`, {
+      const response = await fetch(`${API_BASE_URL}${API_AUTH_LOGIN}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ export const loginUser = createAsyncThunk(
       return data
     } catch (error) {
       console.error('Login error:', error);
-      return rejectWithValue(ERROR_MESSAGES.NETWORK_ERROR)
+      return rejectWithValue(ERROR_NETWORK)
     }
   }
 )
@@ -63,7 +64,7 @@ export const getProfile = createAsyncThunk(
         return rejectWithValue('No token found')
       }
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.AUTH.PROFILE}`, {
+      const response = await fetch(`${SERVER_BASE_URL}${API_AUTH_PROFILE}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -77,7 +78,7 @@ export const getProfile = createAsyncThunk(
 
       return data.data
     } catch (error) {
-      return rejectWithValue(ERROR_MESSAGES.NETWORK_ERROR)
+      return rejectWithValue(ERROR_NETWORK)
     }
   }
 )

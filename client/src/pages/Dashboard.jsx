@@ -1,29 +1,28 @@
 import { useSelector } from "react-redux";
-import { StatsCard } from "../../components/dashboard/StatsCard";
-import { RecentActivity } from "../../components/dashboard/RecentActivity";
+import { StatsCard } from "@/components/dashboard/StatsCard";
+import { RecentActivity } from "@/components/dashboard/RecentActivity";
 import {
   Users,
   GraduationCap,
   BookOpen,
   TrendingUp,
-  ClipboardList,
-  Settings,
-  UserCheck
+  ClipboardList
 } from "lucide-react";
 
-export default function AdminDashboard() {
-  const { stats } = useSelector((state) => state.dashboard);
-  const { user } = useSelector((state) => state.auth);
+export default function Dashboard() {
+  // Removed the TypeScript type annotations for `state`
+  const { stats } = useSelector(state => state.dashboard);
+  const { user } = useSelector(state => state.auth);
 
   return (
     <div className="space-y-8">
       {/* Welcome Header */}
       <div className="space-y-2">
         <h1 className="text-3xl font-bold text-foreground">
-          Admin Dashboard
+          Welcome back, {user?.name}!
         </h1>
         <p className="text-muted-foreground">
-          Complete overview and management of the college system.
+          Here's what's happening at your college today.
         </p>
       </div>
 
@@ -70,24 +69,12 @@ export default function AdminDashboard() {
         />
       </div>
 
-      {/* Admin Specific Stats */}
+      {/* Secondary Stats */}
       <div className="grid gap-6 md:grid-cols-3">
         <StatsCard
           title="Pending Exam Duties"
           value={stats.pendingExamDuties}
           icon={ClipboardList}
-        />
-        <StatsCard
-          title="System Users"
-          value="145"
-          icon={UserCheck}
-          variant="accent"
-        />
-        <StatsCard
-          title="System Health"
-          value="98.5%"
-          icon={Settings}
-          variant="success"
         />
       </div>
 
@@ -97,15 +84,7 @@ export default function AdminDashboard() {
           <RecentActivity />
         </div>
         <div className="space-y-6">
-          {/* Admin Quick Actions */}
-          <div className="bg-card rounded-lg border p-6">
-            <h3 className="font-semibold mb-4">Quick Actions</h3>
-            <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">• Add new user</p>
-              <p className="text-sm text-muted-foreground">• Generate reports</p>
-              <p className="text-sm text-muted-foreground">• System settings</p>
-            </div>
-          </div>
+          {/* Quick Actions could go here */}
         </div>
       </div>
     </div>

@@ -5,6 +5,8 @@ import userReducer from './slices/userSlice'
 import departmentReducer from './slices/departmentSlice'
 import teacherReducer from './slices/teacherSlice'
 import studentReducer from './slices/studentSlice'
+import attendanceSlice from './slices/attendanceSlice'
+import timetableSlice from './slices/timetableSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +16,8 @@ export const store = configureStore({
     departments: departmentReducer,
     teachers: teacherReducer,
     students: studentReducer,
+    attendance: attendanceSlice,
+    timetable: timetableSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

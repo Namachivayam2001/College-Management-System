@@ -1,124 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import Header from '../../components/common/Header';
-import Sidebar from '../../components/common/Sidebar';
-import StatsCard from '../../components/common/StatsCard';
-import DataTable from '../../components/common/DataTable';
+import { useSelector } from "react-redux";
+import { StatsCard } from "../../components/dashboard/StatsCard";
+import {
+  Calendar,
+  BookOpen,
+  TrendingUp,
+  Clock,
+  Award,
+  User
+} from "lucide-react";
 
-const StudentDashboard = () => {
-  const { user } = useSelector(state => state.auth);
-  const [stats, setStats] = useState({
-    totalCourses: 0,
-    totalAssignments: 0,
-    averageGrade: 0,
-    attendancePercentage: 0
-  });
-
-  useEffect(() => {
-    // Mock data for now - replace with actual API calls
-    setStats({
-      totalCourses: 6,
-      totalAssignments: 12,
-      averageGrade: 85,
-      attendancePercentage: 92
-    });
-  }, []);
-
-  const courses = [
-    { id: 1, name: 'Computer Science Fundamentals', code: 'CS101', instructor: 'Dr. Smith', credits: 3, grade: 'A-' },
-    { id: 2, name: 'Data Structures', code: 'CS201', instructor: 'Prof. Johnson', credits: 4, grade: 'B+' },
-    { id: 3, name: 'Algorithms', code: 'CS301', instructor: 'Dr. Williams', credits: 4, grade: 'A' }
-  ];
-
-  const assignments = [
-    { id: 1, title: 'Programming Assignment 1', course: 'CS101', dueDate: '2024-01-15', status: 'Submitted', grade: 'A-' },
-    { id: 2, title: 'Data Structures Project', course: 'CS201', dueDate: '2024-01-20', status: 'Submitted', grade: 'B+' },
-    { id: 3, title: 'Algorithm Analysis', course: 'CS301', dueDate: '2024-01-25', status: 'Pending', grade: '-' }
-  ];
+export default function StudentDashboard() {
+  const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="dashboard-layout">
-      <Header variant="dashboard" />
-      <div className="dashboard-content">
-        <Sidebar />
-        <main className="dashboard-main">
-          <div className="dashboard-header">
-            <h1>Student Dashboard</h1>
-            <p>Welcome back, {user?.firstName} {user?.lastName}</p>
-          </div>
+    <div className="space-y-8">
+      {/* Welcome Header */}
+      <div className="space-y-2">
+        <h1 className="text-3xl font-bold text-foreground">
+          Welcome, {user?.name}!
+        </h1>
+        <p className="text-muted-foreground">
+          Track your academic progress and stay updated with your schedule.
+        </p>
+      </div>
 
-          {/* Stats Cards */}
-          <div className="stats-grid">
-            <StatsCard
-              title="Total Courses"
-              value={stats.totalCourses}
-              icon="📚"
-              trend="+1"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Assignments"
-              value={stats.totalAssignments}
-              icon="📝"
-              trend="+3"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Average Grade"
-              value={`${stats.averageGrade}%`}
-              icon="📊"
-              trend="+2%"
-              trendType="positive"
-            />
-            <StatsCard
-              title="Attendance"
-              value={`${stats.attendancePercentage}%`}
-              icon="✅"
-              trend="+1%"
-              trendType="positive"
-            />
-          </div>
+      {/* Student Stats Grid */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <StatsCard
+          title="Attendance Rate"
+          value="87.5%"
+          icon={TrendingUp}
+          variant="primary"
+          trend={{
+            value: 2.3,
+            label: "vs last month",
+            isPositive: true,
+          }}
+        />
+        <StatsCard
+          title="Subjects Enrolled"
+          value="6"
+          icon={BookOpen}
+          variant="accent"
+        />
+        <StatsCard
+          title="Classes Today"
+          value="4"
+          icon={Clock}
+          variant="warning"
+        />
+        <StatsCard
+          title="Current CGPA"
+          value="8.2"
+          icon={Award}
+          variant="success"
+        />
+      </div>
 
-          {/* Current Courses */}
-          <div className="dashboard-section">
-            <h2>Current Courses</h2>
-            <DataTable
-              data={courses}
-              columns={[
-                { key: 'name', label: 'Course Name' },
-                { key: 'code', label: 'Code' },
-                { key: 'instructor', label: 'Instructor' },
-                { key: 'credits', label: 'Credits' },
-                { key: 'grade', label: 'Grade' }
-              ]}
-              actions={[
-                { label: 'View', action: (row) => console.log('View course:', row) }
-              ]}
-            />
+      {/* Today's Schedule */}
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <Calendar className="w-5 h-5" />
+            Today's Classes
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Mathematics</p>
+                <p className="text-sm text-muted-foreground">Room 101</p>
+              </div>
+              <span className="text-sm font-medium">9:00 AM</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Physics</p>
+                <p className="text-sm text-muted-foreground">Lab 203</p>
+              </div>
+              <span className="text-sm font-medium">11:00 AM</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Computer Science</p>
+                <p className="text-sm text-muted-foreground">Room 305</p>
+              </div>
+              <span className="text-sm font-medium">2:00 PM</span>
+            </div>
           </div>
+        </div>
 
-          {/* Recent Assignments */}
-          <div className="dashboard-section">
-            <h2>Recent Assignments</h2>
-            <DataTable
-              data={assignments}
-              columns={[
-                { key: 'title', label: 'Assignment' },
-                { key: 'course', label: 'Course' },
-                { key: 'dueDate', label: 'Due Date' },
-                { key: 'status', label: 'Status' },
-                { key: 'grade', label: 'Grade' }
-              ]}
-              actions={[
-                { label: 'View', action: (row) => console.log('View assignment:', row) },
-                { label: 'Submit', action: (row) => console.log('Submit assignment:', row) }
-              ]}
-            />
+        {/* Recent Grades */}
+        <div className="bg-card rounded-lg border p-6">
+          <h3 className="font-semibold mb-4 flex items-center gap-2">
+            <Award className="w-5 h-5" />
+            Recent Grades
+          </h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Mathematics Quiz</p>
+                <p className="text-sm text-muted-foreground">March 15, 2024</p>
+              </div>
+              <span className="text-sm font-medium text-primary">A</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">Physics Lab Report</p>
+                <p className="text-sm text-muted-foreground">March 12, 2024</p>
+              </div>
+              <span className="text-sm font-medium text-primary">A-</span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-secondary/30 rounded-lg">
+              <div>
+                <p className="font-medium">CS Assignment</p>
+                <p className="text-sm text-muted-foreground">March 10, 2024</p>
+              </div>
+              <span className="text-sm font-medium text-primary">B+</span>
+            </div>
           </div>
-        </main>
+        </div>
       </div>
     </div>
   );
-};
-
-export default StudentDashboard;
+}

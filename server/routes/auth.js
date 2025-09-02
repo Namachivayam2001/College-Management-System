@@ -44,29 +44,17 @@ const resetPasswordValidation = [
   body('newPassword').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long')
 ];
 
+
 // Routes
-// @route   POST /api/auth/login
-// @access  Public
-router.post('/login', loginValidation, handleValidationErrors, login);
-
-// @route   POST /api/auth/register
 // @access  Private (Admin only)
-router.post('/register', authenticateToken, authorizeRole('Admin'), registerValidation, handleValidationErrors, register);
+router.post('/register', authenticateToken, authorizeRole('Admin'), registerValidation, handleValidationErrors, register); // @route   POST /api/auth/register
+router.get('/profile', authenticateToken, getProfile);                                                                     // @route   GET /api/auth/profile
+router.put('/profile', authenticateToken, updateProfileValidation, handleValidationErrors, updateProfile);                 // @route   PUT /api/auth/profile
 
-// @route   GET /api/auth/profile
-// @access  Private
-router.get('/profile', authenticateToken, getProfile);
 
-// @route   PUT /api/auth/profile
-// @access  Private
-router.put('/profile', authenticateToken, updateProfileValidation, handleValidationErrors, updateProfile);
-
-// @route   POST /api/auth/forgot-password
 // @access  Public
-router.post('/forgot-password', forgotPasswordValidation, handleValidationErrors, forgotPassword);
-
-// @route   POST /api/auth/reset-password
-// @access  Public
-router.post('/reset-password', resetPasswordValidation, handleValidationErrors, resetPassword);
+router.post('/login', loginValidation, handleValidationErrors, login);                             // @route   POST /api/auth/login
+router.post('/forgot-password', forgotPasswordValidation, handleValidationErrors, forgotPassword); // @route   POST /api/auth/forgot-password
+router.post('/reset-password', resetPasswordValidation, handleValidationErrors, resetPassword);    // @route   POST /api/auth/reset-password
 
 module.exports = router;

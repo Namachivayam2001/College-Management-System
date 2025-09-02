@@ -1,5 +1,8 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { API_CONFIG, API_ENDPOINTS, ERROR_MESSAGES } from '../../config/config'
+
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const ERROR_NETWORK = import.meta.env.VITE_ERROR_NETWORK;
+const API_DASHBOARD_ADMIN = import.meta.env.VITE_API_DASHBOARD_ADMIN;
 
 export const fetchDashboardStats = createAsyncThunk(
   'dashboard/fetchStats',
@@ -12,7 +15,7 @@ export const fetchDashboardStats = createAsyncThunk(
         return rejectWithValue('No token found')
       }
 
-      const response = await fetch(`${API_CONFIG.BASE_URL}${API_ENDPOINTS.DASHBOARD.ADMIN}`, {
+      const response = await fetch(`${API_BASE_URL}${API_DASHBOARD_ADMIN}`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -26,7 +29,7 @@ export const fetchDashboardStats = createAsyncThunk(
 
       return data.data
     } catch (error) {
-      return rejectWithValue(ERROR_MESSAGES.NETWORK_ERROR)
+      return rejectWithValue(ERROR_NETWORK)
     }
   }
 )
